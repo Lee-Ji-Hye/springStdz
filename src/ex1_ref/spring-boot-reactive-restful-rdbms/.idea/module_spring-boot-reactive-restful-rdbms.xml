@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_spring-boot-reactive-restful-rdbms" default="compile.module.spring-boot-reactive-restful-rdbms">
+  <dirname property="module.spring-boot-reactive-restful-rdbms.basedir" file="${ant.file.module_spring-boot-reactive-restful-rdbms}"/>
+  
+  <property name="module.jdk.home.spring-boot-reactive-restful-rdbms" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.spring-boot-reactive-restful-rdbms" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.spring-boot-reactive-restful-rdbms" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.spring-boot-reactive-restful-rdbms" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="spring-boot-reactive-restful-rdbms.output.dir" value="undefined"/>
+  <property name="spring-boot-reactive-restful-rdbms.testoutput.dir" value="undefined"/>
+  
+  <path id="spring-boot-reactive-restful-rdbms.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="spring-boot-reactive-restful-rdbms.module.production.classpath">
+    <path refid="${module.jdk.classpath.spring-boot-reactive-restful-rdbms}"/>
+  </path>
+  
+  <path id="spring-boot-reactive-restful-rdbms.runtime.production.module.classpath"/>
+  
+  <path id="spring-boot-reactive-restful-rdbms.module.classpath">
+    <path refid="${module.jdk.classpath.spring-boot-reactive-restful-rdbms}"/>
+  </path>
+  
+  <path id="spring-boot-reactive-restful-rdbms.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.spring-boot-reactive-restful-rdbms">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.spring-boot-reactive-restful-rdbms">
+    <patternset refid="excluded.from.module.spring-boot-reactive-restful-rdbms"/>
+  </patternset>
+  
+  
+  <target name="compile.module.spring-boot-reactive-restful-rdbms" depends="compile.module.spring-boot-reactive-restful-rdbms.production,compile.module.spring-boot-reactive-restful-rdbms.tests" description="Compile module spring-boot-reactive-restful-rdbms"/>
+  
+  <target name="compile.module.spring-boot-reactive-restful-rdbms.production" depends="register.custom.compilers" description="Compile module spring-boot-reactive-restful-rdbms; production classes"/>
+  
+  <target name="compile.module.spring-boot-reactive-restful-rdbms.tests" depends="register.custom.compilers,compile.module.spring-boot-reactive-restful-rdbms.production" description="compile module spring-boot-reactive-restful-rdbms; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.spring-boot-reactive-restful-rdbms" description="cleanup module">
+    <delete dir="${spring-boot-reactive-restful-rdbms.output.dir}"/>
+    <delete dir="${spring-boot-reactive-restful-rdbms.testoutput.dir}"/>
+  </target>
+</project>
