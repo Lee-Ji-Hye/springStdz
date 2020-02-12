@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: default
+  application:
+    name: sb_java_code project
+    version: 1.0
+
+logging:
+  level:
+    root: debug
+
+server:
+  port: 8080
+
+---
+
+spring:
+  profiles: dev
+  application:
+    name: sb_java_code project
+    version: 1.0
+
+logging:
+  level:
+    root: info
+
+server:
+  port: 9000
