@@ -4,55 +4,44 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.reactive.config.ViewResolverRegistry;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
-import org.thymeleaf.spring5.ISpringWebFluxTemplateEngine;
-import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.reactive.ThymeleafReactiveViewResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import java.nio.charset.Charset;
-
-@Configuration
-public class HelloMvcConfig implements WebFluxConfigurer {
+public class HelloMvcConfig implements WebMvcConfigurer {
 
     @Autowired
-    ApplicationContext applicationContext;
-
-    private int MAX_AGE_SECONDS = 3600;
-
-    /**
-     * core에서 설정함.
-     * @return
-     */
-    @Bean
-    public WebFluxConfigurer corsConfigurer() {
-        return new WebFluxConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedOrigins("*")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .maxAge(MAX_AGE_SECONDS);
-            }
-        };
-    }
+    private ApplicationContext applicationContext;
 
     @Bean
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
     }
 
+//    @Override
+//    public void addViewControllers(ViewControllerRegistry viewControllerRegistry) {
+//        viewControllerRegistry.addViewController("/").setViewName("/html/main/index.html");
+//    }
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+        resolver.setTemplateEngine(templateEngine());
+        resolver.setCharacterEncoding("UTF-8"); // <- this was added
+        resolver.setForceContentType(true); // <- this was added
+        resolver.setContentType("text/html; charset=UTF-8"); // <- this was added
+        registry.viewResolver(resolver);
+    }
+
     @Bean
-    public ISpringWebFluxTemplateEngine thymeleafTemplateEngine() {
-        SpringWebFluxTemplateEngine templateEngine = new SpringWebFluxTemplateEngine();
-        templateEngine.setTemplateResolver(thymeleafTemplateResolver());
+    public SpringTemplateEngine templateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true);			// Spring EL 사용
         templateEngine.addDialect(layoutDialect());
         templateEngine.addDialect(new JSONMapperDialect());
@@ -60,27 +49,25 @@ public class HelloMvcConfig implements WebFluxConfigurer {
     }
 
     @Bean
-    public ITemplateResolver thymeleafTemplateResolver() {
-        final SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(this.applicationContext);
-        resolver.setPrefix("classpath:templates/");
-        resolver.setSuffix(".html");
-        resolver.setTemplateMode(TemplateMode.HTML);
-        resolver.setCacheable(false);
-        resolver.setCheckExistence(false);
-        return resolver;
-    }
-
-    @Bean
-    public ThymeleafReactiveViewResolver thymeleafReactiveViewResolver() {
-        ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
-        viewResolver.setTemplateEngine(thymeleafTemplateEngine());
-        return viewResolver;
+    public SpringResourceTemplateResolver templateResolver() {
+        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setCharacterEncoding("UTF-8"); // forcing UTF-8
+        templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setPrefix("classpath:/templates/");	// HTML 파일 위치
+        templateResolver.setSuffix(".html");					// HTML 확장명 사용
+        templateResolver.setTemplateMode(TemplateMode.HTML);	// HTML5 값은 비권장 됨
+        templateResolver.setCacheable(false);					// 캐시 사용 안함
+        return templateResolver;
     }
 
     @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-        registry.viewResolver(thymeleafReactiveViewResolver());
-    }
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")			// 리소스와 매칭될 url
+                .addResourceLocations("classpath:/static/");		// 리소스 위치
+        // .setCachePeriod(60);							// 캐시 지속 시간
+        //.setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePublic());
 
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("/webjars/");
+    }
 }
