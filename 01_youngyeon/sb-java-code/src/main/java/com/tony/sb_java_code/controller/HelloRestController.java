@@ -1,6 +1,6 @@
 package com.tony.sb_java_code.controller;
 
-import com.tony.sb_java_code.dto.ResultDTO;
+import com.tony.sb_java_code.dto.ResultDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloRestController {
     @GetMapping("/list")
     public ResponseEntity<?> list() {
-        return new ResponseEntity<ResultDTO>(new ResultDTO(), HttpStatus.OK);
+        return new ResponseEntity<ResultDto>(new ResultDto(), HttpStatus.OK);
     }
+
+
 }

@@ -1,32 +1,55 @@
 package com.tony.sb_java_code.config;
 
+import lombok.extern.slf4j.Slf4j;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+@Configuration
+@EnableWebMvc
+@Slf4j
 public class HelloMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
+
+    @Bean
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
     }
 
-//    @Override
-//    public void addViewControllers(ViewControllerRegistry viewControllerRegistry) {
-//        viewControllerRegistry.addViewController("/").setViewName("/html/main/index.html");
-//    }
+    @Override
+    public void addViewControllers(ViewControllerRegistry viewControllerRegistry) {
+        viewControllerRegistry.addViewController("/").setViewName("/html/main/index.html");
+    }
+
+    @Override
+    public void configureContentNegotiation(
+            ContentNegotiationConfigurer configurer) {
+        // 확장자를 사용하여 요청할건지,
+        // 미디어유형 결정
+        configurer.useRegisteredExtensionsOnly(false).
+                defaultContentType(MediaType.APPLICATION_JSON).
+                mediaType("xml", MediaType.APPLICATION_XML).
+                mediaType("json",  MediaType.APPLICATION_JSON);
+    }
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
@@ -35,6 +58,17 @@ public class HelloMvcConfig implements WebMvcConfigurer {
         resolver.setCharacterEncoding("UTF-8"); // <- this was added
         resolver.setForceContentType(true); // <- this was added
         resolver.setContentType("text/html; charset=UTF-8"); // <- this was added
+
+        // xml, json 확장자를 붙이면 controller에서도 출력되도록 설정.
+        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+        jsonView.setPrettyPrint(true);
+        MappingJackson2XmlView xmlView = new MappingJackson2XmlView();
+        xmlView.setPrettyPrint(true);
+        registry.enableContentNegotiation(
+                jsonView
+                ,xmlView
+        );
+
         registry.viewResolver(resolver);
     }
 

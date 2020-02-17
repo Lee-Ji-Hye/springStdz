@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+                                     http://xmlns.jcp.org/xml/ns/persistence/orm_2_0.xsd" version="2.1">
+
+    <!-- JPA Named Native Queries -->
+    <named-native-query name="Board.findAll" result-class="com.tony.sb_java_code.dto.BoardEntity">
+        <query>SELECT * FROM BOARD_ENTITY</query>
+    </named-native-query>
+
+    <named-native-query name="Board.findById" result-class="com.tony.sb_java_code.dto.BoardEntity">
+        <query>SELECT * FROM BOARD_ENTITY WHERE id = :id</query>
+    </named-native-query>
+
+    <!-- entity mapping -->
+    <entity class="com.tony.sb_java_code.dto.BoardEntity">
+        <attributes>
+            <basic name="title"/>
+            <basic name="content"/>
+        </attributes>
+    </entity>
+
+</entity-mappings>
