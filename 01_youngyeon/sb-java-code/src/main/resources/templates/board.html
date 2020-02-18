@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title th:text="${title}">게시판</title>
+
+</head>
+<body>
+<div class="w3-container">
+
+    <div class="w3-container w3-teal">
+        <h1>마음의 소리 </h1>
+    </div>
+
+    <div class="w3-bar w3-black">
+        <button class="w3-bar-item w3-button" onclick="openTab('input')">입력화면</button>
+        <button class="w3-bar-item w3-button" onclick="openTab('detail')">상세화면</button>
+        <button class="w3-bar-item w3-button" onclick="openTab('list'); listData();">목록화면</button>
+        <button class="w3-bar-item w3-button" onclick="openTab('profile');">프로필</button>
+    </div>
+
+    <p id="txt-error-msg"></p>
+
+    <section class="w3-container">
+        <div id="profile" class="tabName" style="display:none">
+            <table class="w3-table w3-bordered">
+                <tr>
+                    <td>사진</td>
+                    <td><img src="https://via.placeholder.com/150" alt="프로필사진"></td>
+                </tr>
+                <tr>
+                    <td>이름</td>
+                    <td><input type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>나이</td>
+                    <td><input type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>연락처</td>
+                    <td><input type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>주소</td>
+                    <td><input type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button class="w3-button w3-black">저장</button>
+                        <button class="w3-button w3-black">임시저장</button>
+                        <button class="w3-button w3-black">취소</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="input" class="tabName" style="display:none">
+            <table class="w3-table w3-bordered">
+                <tr>
+                    <td>제목</td>
+                    <td><input id="txt-input-title" type="text" placeholder="제목을 입력하세요." class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td><input id="txt-input-content" type="text" placeholder="내용을 입력하세요." class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="btn-save" class="w3-button w3-black">임시저장</button>
+                        <button id="btn-cancel" class="w3-button w3-black">취소</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div id="detail" class="tabName" style="display:none">
+
+            <table class="w3-table w3-bordered">
+                <tr>
+                    <td>순번</td>
+                    <td><input id="txt-detail-id" type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>제목</td>
+                    <td><input id="txt-detail-title" type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td><input id="txt-detail-content" type="text" class="w3-input"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button id="btn-edit" class="w3-button w3-black">수정</button>
+                        <button id="btn-remove" class="w3-button w3-black">삭제</button>
+                        <button id="btn-comp" class="w3-button w3-black">완료</button>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div id="list" class="tabName" style="display:none">
+            <form action="#" style="text-align: right; margin-top: 10px;">
+                <input id="txt-search" type="text" placeholder="검색" class="w3-input w3-border w3-round" style="width:30%; display: inline;">
+                <button class="w3-button w3-black" id="btn-search">검색</button>
+                <button class="w3-button w3-black" id="btn-sel-remove">삭제</button>
+                <button class="w3-button w3-black" id="btn-sel-send">서버보내기</button>
+            </form>
+            <hr>
+            <table class="w3-table w3-striped">
+                <tr>
+                    <td><input class="w3-check" id="chk_all" name="chk-all" type="checkbox"></td>
+                    <td>순번</td>
+                    <td>제목</td>
+                    <td>내용</td>
+                </tr>
+                <tbody id="tbl-result">
+                    <tr>
+                        <td><input class="w3-check" id="chk_1" name="chk-tr" type="checkbox"></td>
+                        <td><button class="w3-btn w3-black w3-round" name="btn-tr-detail">상세[1]</button></td>
+                        <td>더미 제목 입니다.</td>
+                        <td>더미 내용 입니다.</td>
+                    </tr>
+                    <tr>
+                        <td><input class="w3-check" id="chk_2" name="chk-tr" type="checkbox"></td>
+                        <td><button class="w3-btn w3-black w3-round" name="btn-tr-detail">상세[2]</button></td>
+                        <td>더미 제목 입니다.~</td>
+                        <td>더미 내용 입니다.~</td>
+                    </tr>
+                    <tr>
+                        <td><input class="w3-check" id="chk_3" name="chk-tr" type="checkbox"></td>
+                        <td><button class="w3-btn w3-black w3-round" name="btn-tr-detail">상세[3]</button></td>
+                        <td>더미 제목 입니다.~~</td>
+                        <td>더미 내용 입니다.~~</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <div class="w3-container w3-teal">
+        <h5>토니 연구소</h5>
+        <p>토니 연구소에서는 언제나 여러분을 기다리고 있습니다.</p>
+    </div>
+
+</div>
+<script src="/static/js/board.js"></script>
+<script>
+    window.onload = function () {
+        window.CUR_LIST = "curList";
+        cookieInit();
+        // tableDraw(cbBoardList([], 3)); // 더미 데이터
+        ajax("/api/board", "GET").done(function(result, status, responseObj) {
+            // console.log(result, status, responseObj);
+            cookieSave( window.CUR_LIST, cbBoardList(result.body));
+            tableDraw(cbBoardList(result.body));
+            eventInit();
+            disableDetailInput();
+            openTab('list');
+        });
+    };
+</script>
+</body>
+</html>
