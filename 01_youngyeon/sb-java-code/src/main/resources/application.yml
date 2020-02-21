@@ -4,8 +4,6 @@ spring:
   application:
     name: sb_java_code project
     version: 1.0
-  thymeleaf:
-    cache: false
   devtools:
     livereload:
       enabled: true
@@ -23,11 +21,11 @@ spring:
   jpa:
     show-sql: true
 
-
-
 logging:
   level:
     root: info
+    reactor:
+      netty: debug
 
 server:
   port: 8080

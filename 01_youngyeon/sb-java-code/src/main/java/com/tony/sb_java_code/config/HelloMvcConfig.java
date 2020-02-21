@@ -59,16 +59,16 @@ public class HelloMvcConfig implements WebMvcConfigurer {
         resolver.setForceContentType(true); // <- this was added
         resolver.setContentType("text/html; charset=UTF-8"); // <- this was added
 
-        // xml, json 확장자를 붙이면 controller에서도 출력되도록 설정.
+//         xml, json 확장자를 붙이면 controller에서도 출력되도록 설정.
         MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
         jsonView.setPrettyPrint(true);
         MappingJackson2XmlView xmlView = new MappingJackson2XmlView();
         xmlView.setPrettyPrint(true);
+//        registry.jsp("/WEB-INF/views/", ".jsp").viewClass(JstlView.class);
         registry.enableContentNegotiation(
                 jsonView
                 ,xmlView
         );
-
         registry.viewResolver(resolver);
     }
 
@@ -93,6 +93,7 @@ public class HelloMvcConfig implements WebMvcConfigurer {
         templateResolver.setCacheable(false);					// 캐시 사용 안함
         return templateResolver;
     }
+
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
