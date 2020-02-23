@@ -47,7 +47,7 @@ public class WebClientConfig {
      * @return
      */
     @Bean
-    public WebClient poolWebClient(
+    public WebClient webClient(
     ) {
         TcpClient tcpClient = TcpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000) // Connection Timeout
@@ -57,7 +57,9 @@ public class WebClientConfig {
 
         ClientHttpConnector connector = new ReactorClientHttpConnector(HttpClient.from(tcpClient));
 
-        return WebClient.builder().clientConnector(connector).build();
+        return WebClient.builder()
+           .baseUrl("http://localhost:8081")
+           .clientConnector(connector).build();
     }
 
     /**

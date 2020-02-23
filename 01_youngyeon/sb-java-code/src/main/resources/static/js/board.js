@@ -40,7 +40,26 @@ Array.prototype.remove = function(idx) {
     if (idx > -1) this.splice(idx, 1);
 };
 
+function duplicateCheck(list) {
+    if (list.filter(b=>b.title===title).length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function eventInit() {
+
+    // 페이지당 콤보박스 체인지
+    $("#sel-pageSize").on("change", function(e){
+        fnPage(0, $(this).val(), $("#txt-search").val() + "");
+    });
+
+    // 검색 버튼
+    $("#btn-search").on("click", function(e) {
+        e.preventDefault();
+        fnPage(0, $("#sel-pageSize").val(), $("#txt-search").val() + "");
+    });
 
     // 서버보내기
     $("#btn-sel-send").on("click", function(e) {
@@ -95,61 +114,121 @@ function eventInit() {
         if($("#chk_all").prop("checked")) {
             //해당화면에 전체 checkbox들을 체크해준다
             $("input[type=checkbox]").prop("checked",true);
-            // 전체선택 체크박스가 해제된 경우
         } else {
             //해당화면에 모든 checkbox들의 체크를해제시킨다.
             $("input[type=checkbox]").prop("checked",false);
         }
     });
 
-    // 검색
-    $("#btn-search").on("click", function(e) {
-        e.preventDefault();
-        let searchTxt = $("#txt-search").val();
-        search(searchTxt);
-    });
     // 수정
     $("#btn-edit").on("click", function(e) {
         e.preventDefault();
         // input 활성화
         enableDetailInput();
+        window.BTN_EDIT_FLAG = true;
+        $("#txt-error-msg").css("display", "block");
+
     });
+
     // 삭제
     $("#btn-remove").on("click", function(e) {
         e.preventDefault();
-        // 실제로 서버로 보낸다. 단 물어본다.
-        if(confirm("서버로 보내면 진짜 지우는데 책임지겠습니까?")) {
-            // 서버로 ..
+        if(confirm("정말로 삭제할까요?")) {
+            setTimeout(function(){
+                enableDetailInput();
+                window.BTN_EDIT_FLAG = false;
+                $("#btn-comp").click();
+            }, 1);
         }
+        disableDetailInput();
     });
+
     // 완료
     $("#btn-comp").on("click", function(e) {
         e.preventDefault();
-        // 실제로 서버로 보낸다.
+        // ==================================================
+        // 변수 선언
+        // ==================================================
+        let id = $("#txt-detail-id").val();
+        let title = $("#txt-detail-title").val();
+        let content = $("#txt-detail-content").val();
+        let list = cookieRead(window.CUR_LIST);
+        let item = {id: id, title: title, content:content};
+        let editList = list.filter(b=>b.id !== item.id*1);
+        // ==================================================
+        // 버튼 삭제, 수정 정의 플러그
+        // ==================================================
+        if(window.BTN_EDIT_FLAG === true) {
+            // ==================================================
+            // 중복 체크
+            // ==================================================
+            if(duplicateCheck(list)){
+                $("#txt-error-msg").html("이미 값이 존재합니다.");
+                return;
+            }
+            editList.push(item);
+        }
+        // $("#txt-error-msg").html(JSON.stringify(item));
+
+        // ==================================================
+        // 변경된 리스트를 로컬스토리지 저장
+        // ==================================================
+        cookieSave(window.CUR_LIST, editList);
+        // ==================================================
+        // 입력텍스트(id, title, content) 비활성화
+        // ==================================================
         disableDetailInput();
+        // ==================================================
+        // 목록 페이지 탭 이동
+        // ==================================================
+        openTab('list');
+        // ==================================================
+        // 목록 페이지 데이터 재출력
+        // ==================================================
+        listData();
     });
-    // 저장
+
+    // 임시저장
     $("#btn-save").on("click", function(e) {
         e.preventDefault();
         $("#txt-error-msg").css("display", "block");
+        // ==================================================
+        // 변수 선언
+        // ==================================================
         let title = $("#txt-input-title").val();
         let content = $("#txt-input-content").val();
         let list = cookieRead(window.CUR_LIST);
-        if(list.filter(b=>b.title===title).length > 0){
+        // ==================================================
+        // 중복 체크
+        // ==================================================
+        if(duplicateCheck(list)) {
             $("#txt-error-msg").html("이미 값이 존재합니다.");
             return;
         }
+        // ==================================================
+        // 값 추가
+        // ==================================================
         let item = {id: `${guid()}<임시번호>`, title: title, content:content};
         list.push(item);
-        $("#txt-error-msg").html(JSON.stringify(item));
+        // $("#txt-error-msg").html(JSON.stringify(item));
+        // ==================================================
+        // 변경된 리스트를 로컬스토리지 저장
+        // ==================================================
         cookieSave(window.CUR_LIST, list);
+        // ==================================================
+        // 목록 페이지 탭 이동
+        // ==================================================
+        openTab('list');
+        // ==================================================
+        // 목록 페이지 데이터 재출력
+        // ==================================================
+        listData();
+
     });
     // 취소
     $("#btn-cancel").on("click", function(e) {
         e.preventDefault();
     });
-
-
 
     // 태이블 행 마우스 모양
     // $("#tbl-result tr").hover(function() {
@@ -181,6 +260,61 @@ function cbBoardList(list=[], rowNumber=1) {
     return list;
 }
 
+function fnPage(page=0, size=1, title="") {
+    ajax(`/api/boardPage`, "GET", {
+        page: page, size: size, title: title
+    }).done(function(result, status, responseObj) {
+        console.log(result, status, responseObj);
+        let content = result.content;
+        let totalPages = result.totalPages;
+        let pageable = result.pageable;
+        cookieSave( window.CUR_LIST, cbBoardList(content));
+        tableDraw(cbBoardList(content));
+        pagingDraw(pageable, totalPages, title+"");
+    });
+}
+
+function pagingDraw(pageable, totalPages, title) {
+    // ==================================================
+    // 페이징 변수 선언
+    // ==================================================
+    let currPageNo = pageable.pageNumber;
+    let pageSize = pageable.pageSize;
+    let viewPageNo = 1;
+    let pageHtml = "";
+
+    // ==================================================
+    // 페이징 html 태그 만들기
+    // ==================================================
+    pageHtml += `<a pageInfo='${0}|${pageSize}|${title}' class="w3-button a-pageNo">«</a>`;
+    for(let i=0; i<totalPages; i++) {
+        if (i === currPageNo) {
+            pageHtml += `<a pageInfo='${(viewPageNo-1)}|${pageSize}|${title}' class="w3-button a-pageNo w3-green">${viewPageNo}</a>`;
+        } else {
+            pageHtml += `<a pageInfo='${(viewPageNo-1)}|${pageSize}|${title}' class="w3-button  a-pageNo">${viewPageNo}</a>`;
+        }
+        viewPageNo++;
+    }
+    pageHtml += `<a pageInfo='${totalPages-1}|${pageSize}|${title}' class="w3-button a-pageNo">»</a>`;
+
+    // ==================================================
+    // 페이징 html 그리기
+    // ==================================================
+    $("#div-page").empty();
+    $("#div-page").html(pageHtml);
+
+    // ==================================================
+    // 페이징 이벤트 만들기
+    // ==================================================
+    $(".a-pageNo").on("click", function(e){
+        let pageInfo = $(this).attr("pageInfo").split("|");
+        let cur = pageInfo[0];
+        let size = pageInfo[1];
+        let title = pageInfo[2];
+        fnPage(cur, size, title);
+    });
+}
+
 function tableDraw(list) {
     let tblResult = $("#tbl-result");
     tblResult.empty();
@@ -200,15 +334,6 @@ function tableDraw(list) {
         let idx = $(this).closest('tr').prevAll().length;
         openTab("detail"); // 탭 이동
         detailData(cookieRead( window.CUR_LIST)[idx]); // 값 설정
-    });
-}
-
-function search(title="") {
-    ajax("/api/boardContains", "GET", {title:title}).done(function(result, status, responseObj) {
-        // console.log(result, status, responseObj);
-        cookieSave( window.CUR_LIST, cbBoardList(result.body));
-        tableDraw(cbBoardList(result.body));
-        // eventInit();
     });
 }
 

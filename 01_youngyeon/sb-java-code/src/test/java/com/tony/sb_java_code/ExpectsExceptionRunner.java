@@ -1,4 +1,4 @@
-package com.tony.sb_java_code.runner;
+package com.tony.sb_java_code;
 
 import com.tony.sb_java_code.anno.ExpectsException;
 import org.junit.AssumptionViolatedException;

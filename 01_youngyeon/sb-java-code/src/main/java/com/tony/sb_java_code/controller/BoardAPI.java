@@ -4,6 +4,8 @@ import com.tony.sb_java_code.dto.BoardVo;
 import com.tony.sb_java_code.dto.ResultDto;
 import com.tony.sb_java_code.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class BoardAPI {
      */
     @GetMapping(value = "/boardJsonXml", produces = {APPLICATION_JSON_VALUE,APPLICATION_XML_VALUE} )
     public ResponseEntity<?> getXmlJsonBoard(@ModelAttribute BoardVo boardVo) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
     }
 
     /**
@@ -39,7 +41,7 @@ public class BoardAPI {
      */
     @GetMapping(value = "/board", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoard(@ModelAttribute BoardVo boardVo) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
     }
 
     /**
@@ -52,7 +54,7 @@ public class BoardAPI {
      */
     @GetMapping(value = "/boardContains", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoardContains(@ModelAttribute BoardVo boardVo, String title) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.findByTitleContains(title)), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.findByTitleContains(title)), HttpStatus.OK);
     }
 
     /**
@@ -65,7 +67,7 @@ public class BoardAPI {
      */
     @GetMapping(value = "/boardLike", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoardLike(@ModelAttribute BoardVo boardVo, String title) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.findByTitleLike(title)), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.findByTitleLike(title)), HttpStatus.OK);
     }
 
     /**
@@ -77,15 +79,15 @@ public class BoardAPI {
      */
     @GetMapping(value = "/board/{title}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoardTitle(@ModelAttribute BoardVo boardVo, @PathVariable String title) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.findByTitle(title)), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.findByTitle(title)), HttpStatus.OK);
     }
     @GetMapping(value = "/board/my/{title}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoardMyTitle(@ModelAttribute BoardVo boardVo, @PathVariable String title) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.findMyTitle(title)), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.findMyTitle(title)), HttpStatus.OK);
     }
     @GetMapping(value = "/board/id/{id}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBoardById(@ModelAttribute BoardVo boardVo, @PathVariable Long id) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.findByIdNativeQuery(id)), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.findByIdNativeQuery(id)), HttpStatus.OK);
     }
 
     /**
@@ -98,7 +100,7 @@ public class BoardAPI {
      */
     @GetMapping(value = "/boardXml", produces = APPLICATION_XML_VALUE)
     public ResponseEntity<?> getXmlBoard(@ModelAttribute BoardVo boardVo) {
-        return new ResponseEntity<ResultDto>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
+        return new ResponseEntity<>(getResultBodyBuild(service.finaAll()), HttpStatus.OK);
     }
 
     /**
@@ -111,6 +113,17 @@ public class BoardAPI {
     public ResponseEntity<ResultDto> postBoard(@RequestBody BoardVo boardVo) {
         service.save(boardVo);
         return ResponseEntity.ok().body(getResultBodyBuild());
+    }
+
+    /**
+     *
+     * @param pageable
+     * http://localhost:8081/api/boardPage?page=0&size=5
+     * @return
+     */
+    @GetMapping(value = "/boardPage", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<BoardVo>> boardPage(Pageable pageable, String title) {
+        return new ResponseEntity<>(service.boardPage(pageable, title), HttpStatus.OK);
     }
 
     private ResultDto getResultBodyBuild() {

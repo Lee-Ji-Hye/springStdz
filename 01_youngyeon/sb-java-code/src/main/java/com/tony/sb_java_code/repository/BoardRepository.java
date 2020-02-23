@@ -23,6 +23,6 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     List<BoardEntity> findMyTitle(@Param("title") String title);
 
     // 페이징 처리
-    Page<BoardEntity> findBoardEntitiesBy(Pageable pageable);
+    Page<BoardEntity> findBoardEntitiesByTitleContains(Pageable pageable, String title);
 
 }

@@ -203,6 +203,16 @@
         </dependency>
         <!-- WebClient 사용하기 위함 -->
 
+        <!-- 메시지 브로커 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+        </dependency>
+
         <!-- servlet api : jsp 사용을 위함. -->
 <!--        <dependency>-->
 <!--            <groupId>javax.servlet</groupId>-->
@@ -222,6 +232,12 @@
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>3.0.0-M4</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.13.1</version>
+            <scope>compile</scope>
         </dependency>
 
 

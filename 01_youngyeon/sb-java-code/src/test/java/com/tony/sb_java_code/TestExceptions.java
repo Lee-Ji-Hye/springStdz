@@ -1,7 +1,6 @@
 package com.tony.sb_java_code;
 
 import com.tony.sb_java_code.anno.ExpectsException;
-import com.tony.sb_java_code.runner.ExpectsExceptionRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

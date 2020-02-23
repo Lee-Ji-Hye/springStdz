@@ -6,7 +6,9 @@ import com.tony.sb_java_code.repository.BoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +40,11 @@ public class BoardService {
     @PostConstruct
     public void initBoardEntity() {
         // 더미 데이터 저장
-        boardRepository.save(BoardEntity.builder()
-        .title("테스트 제목1").content("테스트 콘텐츠1").build());
-        boardRepository.save(BoardEntity.builder()
-        .title("테스트 제목2").content("테스트 콘텐츠2").build());
-        boardRepository.save(BoardEntity.builder()
-        .title("테스트 제목2").content("테스트 콘텐츠3").build());
-
+        // 페이징 처리를 위해 100개 이상 데이터를 쌓아 본다.
+        for(int i=0; i<100; i++) {
+           boardRepository.save(BoardEntity.builder()
+              .title("테스트 제목" + i).content("테스트 콘텐츠" + i).build());
+        }
         findNativeXmlQuery(1L);
 
         boardPaging();
@@ -55,8 +55,22 @@ public class BoardService {
      */
     public void boardPaging() {
         boardRepository
-                .findBoardEntitiesBy(PageRequest.of(1, 10))
+                .findBoardEntitiesByTitleContains(PageRequest.of(1, 10), "")
                 .forEach(b -> log.info(b.toString()));
+    }
+
+    public Page<BoardVo> boardPage(Pageable pageable, String title) {
+       return boardRepository.findBoardEntitiesByTitleContains(pageable, title).map(
+          b-> {
+             BoardVo boardVo = new BoardVo();
+             boardVo.setContent(b.getContent());
+             boardVo.setId(b.getId());
+             boardVo.setTitle(b.getTitle());
+             boardVo.setRegDateTime(LocalDateTime.now());
+             boardVo.setRegWriter("admin");
+             return boardVo;
+          }
+       );
     }
 
     /**

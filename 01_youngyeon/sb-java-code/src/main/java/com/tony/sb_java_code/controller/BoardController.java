@@ -11,7 +11,7 @@ public class BoardController {
 
     @GetMapping("/board")
     public String getBoard(Model model) {
-        model.addAttribute("title", "다행이야");
+        model.addAttribute("title", "스프링 연구소");
         return "board";
     }
 }

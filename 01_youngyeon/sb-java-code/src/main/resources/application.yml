@@ -21,14 +21,49 @@ spring:
   jpa:
     show-sql: true
 
+  # Embedded ActiveMQ Configuration Example
+  activemq:
+    broker-url: vm://embedded?broker.persistent=false,useShutdownHook=false
+    in-memory: true
+    non-blocking-redelivery: true
+    packages:
+      trust-all: false
+      trusted: com.tony.sb_java_code
+    pool:
+      block-if-full: true
+      block-if-full-timeout: -1
+      enabled: false
+      idle-timeout: 30000
+      max-connections: 1
+      time-between-expiration-check: -1
+      use-anonymous-producers: true
+
+  # Spring JMS Settings
+  jms:
+    listener:
+      acknowledge-mode: auto
+      auto-startup: true
+      concurrency: 5
+      max-concurrency: 10
+    pub-sub-domain: false
+    template:
+      default-destination:
+      delivery-mode: non_persistent
+      priority: 100
+      qos-enabled: true
+      receive-timeout: 1000
+      time-to-live: 36000
+
 logging:
+  pattern:
+    console: "%clr(%d{yy-MM-dd E HH:mm:ss.SSS}){blue} %clr(%-5p) %clr(${PID}){faint} %clr(---){faint} %clr([%8.15t]){cyan} %clr(%-40.40logger{0}){blue} %clr(:){red} %clr(%m){faint}%n"
   level:
     root: info
-    reactor:
-      netty: debug
+#    reactor:
+#      netty: debug
 
 server:
-  port: 8080
+  port: 8081
 
 ---
 
@@ -44,3 +79,4 @@ logging:
 
 server:
   port: 9000
+

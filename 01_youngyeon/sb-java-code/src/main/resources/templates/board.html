@@ -14,7 +14,7 @@
 <div class="w3-container">
 
     <div class="w3-container w3-teal">
-        <h1>마음의 소리 </h1>
+        <h1><a href="/view/board">스프링 탐구 게시판</a></h1>
     </div>
 
     <div class="w3-bar w3-black">
@@ -31,7 +31,9 @@
             <table class="w3-table w3-bordered">
                 <tr>
                     <td>사진</td>
-                    <td><img src="https://via.placeholder.com/150" alt="프로필사진"></td>
+                    <td><img src="https://via.placeholder.com/150" alt="프로필사진">
+                        <input type="file">
+                    </td>
                 </tr>
                 <tr>
                     <td>이름</td>
@@ -105,8 +107,15 @@
 
         </div>
 
-        <div id="list" class="tabName" style="display:none">
+        <div id="list" class="tabName" style="display:none; text-align: center;">
             <form action="#" style="text-align: right; margin-top: 10px;">
+                페이지당:
+                <select name="sel-pageSize" id="sel-pageSize" class="w3-select" style="width:80px; display: inline;">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
                 <input id="txt-search" type="text" placeholder="검색" class="w3-input w3-border w3-round" style="width:30%; display: inline;">
                 <button class="w3-button w3-black" id="btn-search">검색</button>
                 <button class="w3-button w3-black" id="btn-sel-remove">삭제</button>
@@ -141,11 +150,21 @@
                     </tr>
                 </tbody>
             </table>
+
+            <div class="w3-bar" id="div-page">
+                <a href="#" class="w3-button">«</a>
+                <a href="#" class="w3-button w3-black">1</a>
+                <a href="#" class="w3-button">2</a>
+                <a href="#" class="w3-button">3</a>
+                <a href="#" class="w3-button">4</a>
+                <a href="#" class="w3-button">»</a>
+            </div>
+
         </div>
 
     </section>
 
-    <div class="w3-container w3-teal">
+    <div class="w3-container w3-teal" style="margin-top: 10px;">
         <h5>토니 연구소</h5>
         <p>토니 연구소에서는 언제나 여러분을 기다리고 있습니다.</p>
     </div>
@@ -155,16 +174,17 @@
 <script>
     window.onload = function () {
         window.CUR_LIST = "curList";
+        window.BTN_EDIT_FLAG = true;
+        let pageSize = $("#sel-pageSize").val();
+        let txtSearch = $("#txt-search").val();
+        let curPage = 0;
+
         cookieInit();
-        // tableDraw(cbBoardList([], 3)); // 더미 데이터
-        ajax("/api/board", "GET").done(function(result, status, responseObj) {
-            // console.log(result, status, responseObj);
-            cookieSave( window.CUR_LIST, cbBoardList(result.body));
-            tableDraw(cbBoardList(result.body));
-            eventInit();
-            disableDetailInput();
-            openTab('list');
-        });
+        fnPage(curPage, pageSize, txtSearch);
+        eventInit();
+        disableDetailInput();
+        openTab('list');
+
     };
 </script>
 </body>
