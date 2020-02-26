@@ -22,11 +22,35 @@
         <button class="w3-bar-item w3-button" onclick="openTab('detail')">상세화면</button>
         <button class="w3-bar-item w3-button" onclick="openTab('list'); listData();">목록화면</button>
         <button class="w3-bar-item w3-button" onclick="openTab('profile');">프로필</button>
+        <button class="w3-bar-item w3-button" onclick="openTab('todo');">오늘할일</button>
     </div>
 
     <p id="txt-error-msg"></p>
 
     <section class="w3-container">
+
+        <div id="todo" class="tabName" style="display:none">
+            <ul class="w3-ul">
+                <li class="w3-red">계획: 0건</li>
+                <li class="w3-green">진행중: 0건</li>
+                <li class="w3-blue">완료: 0건</li>
+            </ul>
+            <form action="#">
+                <input id="txt-todo-input" type="text" class="w3-input" placeholder="할일을 적으시오." style="margin-top: 5px; margin-bottom: 5px;">
+                <button id="btn-todo-reg" class="w3-button w3-black">등록</button>
+                <button id="btn-todo-delall" class="w3-button w3-black">모두지우기</button>
+                <button id="btn-todo-server-send" class="w3-button w3-black">서버전송</button>
+            </form>
+            <table class="w3-table w3-bordered" id="tbl-todo-result">
+                <colgroup>
+                    <col width="21%">
+                    <col width="78%">
+                </colgroup>
+                <tbody id="tbl-todo-body">
+                </tbody>
+            </table>
+        </div>
+
         <div id="profile" class="tabName" style="display:none">
             <table class="w3-table w3-bordered">
                 <tr>

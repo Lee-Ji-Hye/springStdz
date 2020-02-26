@@ -48,7 +48,39 @@ function duplicateCheck(list) {
     }
 }
 
+function tblTodoRowCreateDraw({id, working}) {
+    let tbody = `
+        <tr>
+            <td><input id="${id}" name="btn-todo-check" type="checkbox" class="w3-check">${id}</td>
+            <td><input value="${working}" name="txt-todo-row-input" type="text" class="w3-input" disabled></td>
+            <td>
+                <button class="btn-todo-del w3-button w3-black">삭제</button>
+            </td>
+        </tr>
+    `;
+
+    $("#tbl-todo-body").append(tbody);
+    $(".btn-todo-del").on("click", function(e){
+        let tr = $(this).parent().parent();
+        console.log(tr);
+        tr.remove();
+    });
+}
+
 function eventInit() {
+
+    $("#btn-todo-delall").on("click", function(e) {
+       e.preventDefault();
+       $("#tbl-todo-body").empty();
+    });
+
+    $("#btn-todo-reg").on("click", function(e) {
+       e.preventDefault();
+       tblTodoRowCreateDraw({
+           id: guid(),
+           working: $("#txt-todo-input").val()
+       });
+    });
 
     // 페이지당 콤보박스 체인지
     $("#sel-pageSize").on("change", function(e){
