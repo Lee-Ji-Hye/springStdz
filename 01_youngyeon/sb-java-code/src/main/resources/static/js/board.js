@@ -1,3 +1,43 @@
+let memoryCache = {};
+let CACHE_TTL = 86400000; // 하루
+let CACHE_PREFIX = 'ti';
+
+function setCache(myKey, data) {
+    let stamp, obj;
+    stamp = Date.now();
+    obj = {
+        date: stamp,
+        data: data
+    };
+    localStorage.setItem(CACHE_PREFIX+myKey, JSON.stringify(obj));
+    memoryCache[myKey] = obj;
+}
+
+function getCached(myKey) {
+    let key, obj;
+    key = CACHE_PREFIX + myKey;
+    if (memoryCache[key]) {
+        if(memoryCache[key].date - Date.now() > CACHE_TTL) {
+            return false;
+        }
+        return memoryCache[key].data;
+    }
+
+    obj = localStorage.getItem(key);
+
+    if (obj) {
+        obj = JSON.parse(obj);
+        if (Date.now() - obj.date > CACHE_TTL) {
+            localStorage.removeItem(key);
+            delete(memoryCache[key]);
+            return false;
+        }
+        memoryCache[key] = obj;
+        return obj.data;
+    }
+
+}
+
 let Board = function() {};
 Board.prototype = {
 };
@@ -26,14 +66,27 @@ function enableDetailInput() {
 
 // ajax("/api/board", "GET");
 function ajax(url="", method="GET", data={}) {
-    return $.ajax({
-        url: url,
-        type: method,
-        data: method === "GET" ? data: JSON.stringify(data),
-        accept: "application/json",
-        contentType: "application/json; charset=utf-8",
-        success:function(data){}
-    });
+    let cached;
+    if (method === "GET") {
+        let param = $.param( data );
+        cached = getCached(param);
+        if (cached) {
+            return new Promise(function (resolve, reject) {
+                resolve(cached);
+            });
+        } else {
+            return $.ajax({
+                url: url,
+                type: method,
+                data: method === "GET" ? data: JSON.stringify(data),
+                accept: "application/json",
+                contentType: "application/json; charset=utf-8",
+                success:function(data){
+                    setCache(param, data);
+                }
+            });
+        }
+    }
 }
 
 Array.prototype.remove = function(idx) {
