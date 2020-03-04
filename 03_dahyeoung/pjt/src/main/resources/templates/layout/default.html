@@ -1,0 +1,27 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!-- Common head -->
+<head th:replace="fragments/head :: head"></head>
+
+<body>
+	<!-- Breadcrumb  -->
+	<div th:replace="fragments/breadcrumb :: breadcrumb"></div>
+	
+    <!-- Page content -->
+    <th:block layout:fragment="content"></th:block>
+
+    <!-- Common footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+	
+	<!--  popup content -->
+    <th:block layout:fragment="popup" th:remove="tag"></th:block>
+	
+	<!-- Common Script -->
+    <th:block th:include="fragments/commonScript :: commonScript" th:remove="tag"></th:block>
+    
+    <!-- Custom Script -->
+    <th:block layout:fragment="customScript" th:remove="tag"></th:block>
+</body>
+</html>
