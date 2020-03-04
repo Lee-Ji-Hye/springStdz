@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+ layout:decorator="layout/default">
+
+<!-- Contents -->
+<div layout:fragment="content" class="wrap">
+    <!-- 입력 부분 -->
+    
+    <!-- 리스트 -->
+    <div class="contents">
+        <div class="task" th:each="task : ${tasks}">
+            <span class="cmnty" th:attr="data-cd=${task.cmntyId}">
+            shinsegae
+            </span>
+            <span th:text="${task.tskDes}"></span>
+            <span class="tskDt" th:text="${task.tskDueDt}"></span>
+        </div>
+    </div>
+</div>
+<!-- End of Contents -->
+
+<!-- Contents -->
+<th:block layout:fragment="popup">
+	<div class="newTask" style="display: none">
+	</div>
+</th:block>
+<!-- End of Contents -->
+
+<!-- Contents -->
+<th:block layout:fragment="	">
+	<script th:src="@{custom/js/index/page_index.js}"></script>
+</th:block>
+<!-- End of Contents -->
+
+</html> 
